@@ -168,7 +168,7 @@ class openHABSkill(MycroftSkill):
 		dictLenght = str(len(self.lightingItemsDic) + len(self.switchableItemsDic) + len(self.currentTempItemsDic) + len(self.currentHumItemsDic) + len(self.currentThermostatItemsDic) + len(self.targetTemperatureItemsDic) + len(self.homekitHeatingCoolingModeDic))
 		self.speak_dialog('RefreshTaggedItems', {'number_item': dictLenght})
 
-	def _handle_onoff_status_intent(self, message_item, command)
+	def _handle_onoff_status_intent(self, message_item, command):
 		#We have to find the item to update from our dictionaries
 		self.lightingSwitchableItemsDic = dict()
 		self.lightingSwitchableItemsDic.update(self.lightingItemsDic)
