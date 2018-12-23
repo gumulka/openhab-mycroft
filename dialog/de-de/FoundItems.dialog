@@ -1,1 +1,2 @@
-habe folgenden Gegenstände gefunden: {{items}}
+Ich habe folgende Gegenstände gefunden: {{items}}
+Es gibt die folgenden Gegenstände: {{items}}

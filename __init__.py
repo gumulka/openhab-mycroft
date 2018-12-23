@@ -182,13 +182,13 @@ class openHABSkill(MycroftSkill):
 				self.speak_dialog('Status' + command, { 'item': message_item})
 			elif statusCode == 404:
 				LOGGER.error("Some issues with the command execution!. Item not found")
-				self.speak_dialog('ItemNotFoundError')
+				self.speak_dialog('ItemNotFoundError', { 'item': message_item})
 			else:
 				LOGGER.error("Some issues with the command execution!")
 				self.speak_dialog('CommunicationError')
 		else:
 			LOGGER.error("Item not found!")
-			self.speak_dialog('ItemNotFoundError')
+			self.speak_dialog('ItemNotFoundError', { 'item': message_item})
 
 	def handle_on_status_intent(self, message):
 		self._handle_onoff_status_intent(message.data.get('Item'), "ON")
@@ -244,14 +244,14 @@ class openHABSkill(MycroftSkill):
 				self.speak_dialog('StatusDimmer', {'item': messageItem})
 			elif statusCode == 404:
 				LOGGER.error("Some issues with the command execution!. Item not found")
-				self.speak_dialog('ItemNotFoundError')
+				self.speak_dialog('ItemNotFoundError', {'item': messageItem})
 			else:
 				LOGGER.error("Some issues with the command execution!")
 				self.speak_dialog('CommunicationError')
 
 		else:
 			LOGGER.error("Item not found!")
-			self.speak_dialog('ItemNotFoundError')
+			self.speak_dialog('ItemNotFoundError', {'item': messageItem})
 
 	def	handle_what_status_intent(self, message):
 		messageItem = message.data.get('Item')
@@ -296,7 +296,7 @@ class openHABSkill(MycroftSkill):
 			self.speak_dialog('TempHumStatus', {'item': messageItem, 'temp_hum': infoType, 'temp_hum_val': state, 'units_of_measurement': unitOfMeasure})
 		else:
 			LOGGER.error("Item not found!")
-			self.speak_dialog('ItemNotFoundError')
+			self.speak_dialog('ItemNotFoundError', {'item': messageItem})
 
 	def handle_setTemp_status_intent(self, message):
 		command = message.data.get('ThermostatStatusKeyword')
@@ -328,14 +328,14 @@ class openHABSkill(MycroftSkill):
 				self.speak_dialog('ThermostatStatus', {'item': messageItem, 'temp_val': str(newTempValue)})
 			elif statusCode == 404:
 				LOGGER.error("Some issues with the command execution! Item not found")
-				self.speak_dialog('ItemNotFoundError')
+				self.speak_dialog('ItemNotFoundError', {'item': messageItem})
 			else:
 				LOGGER.error("Some issues with the command execution!")
 				self.speak_dialog('CommunicationError')
 
 		else:
 			LOGGER.error("Item not found!")
-			self.speak_dialog('ItemNotFoundError')
+			self.speak_dialog('ItemNotFoundError', {'item': messageItem})
 
 	def sendStatusToItem(self, ohItem, command):
 		requestUrl = self.url+"/items/%s/state" % (ohItem)
