@@ -1,0 +1,1 @@
+(imposta|accendi|metti) off (?P<Item>.*)

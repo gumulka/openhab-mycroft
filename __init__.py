@@ -58,7 +58,7 @@ class openHABSkill(MycroftSkill):
 
 	def initialize(self):
 	
-		supported_languages = ["en-US", "it-IT", "de-DE"]
+		supported_languages = ["en-us", "it-it", "de-de"]
 		
 		if self.lang not in supported_languages:
 			self.log.warning("Unsupported language for " + self.name + ", shutting down skill.")
@@ -67,8 +67,11 @@ class openHABSkill(MycroftSkill):
 		refresh_tagged_items_intent = IntentBuilder("RefreshTaggedItemsIntent").require("RefreshTaggedItemsKeyword").build()
 		self.register_intent(refresh_tagged_items_intent, self.handle_refresh_tagged_items_intent)
 
-		onoff_status_intent = IntentBuilder("OnOff_StatusIntent").require("OnOffStatusKeyword").require("Command").require("Item").build()
-		self.register_intent(onoff_status_intent, self.handle_onoff_status_intent)
+		on_status_intent = IntentBuilder("On_StatusIntent").require("OnOffStatusKeyword").require("OnCommand").require("Item").build()
+		self.register_intent(on_status_intent, self.handle_on_status_intent)
+
+		off_status_intent = IntentBuilder("Off_StatusIntent").require("OnOffStatusKeyword").require("OffCommand").require("Item").build()
+		self.register_intent(off_status_intent, self.handle_off_status_intent)
 
 		dimmer_status_intent = IntentBuilder("Dimmer_StatusIntent").require("DimmerStatusKeyword").require("Item").optionally("BrightPercentage").build()
 		self.register_intent(dimmer_status_intent, self.handle_dimmer_status_intent)
@@ -165,33 +168,33 @@ class openHABSkill(MycroftSkill):
 		dictLenght = str(len(self.lightingItemsDic) + len(self.switchableItemsDic) + len(self.currentTempItemsDic) + len(self.currentHumItemsDic) + len(self.currentThermostatItemsDic) + len(self.targetTemperatureItemsDic) + len(self.homekitHeatingCoolingModeDic))
 		self.speak_dialog('RefreshTaggedItems', {'number_item': dictLenght})
 
-	def handle_onoff_status_intent(self, message):
-		command = message.data.get('Command')
-		messageItem = message.data.get('Item')
-
+	def _handle_onoff_status_intent(self, message_item, command)
 		#We have to find the item to update from our dictionaries
 		self.lightingSwitchableItemsDic = dict()
 		self.lightingSwitchableItemsDic.update(self.lightingItemsDic)
 		self.lightingSwitchableItemsDic.update(self.switchableItemsDic)
 
-		ohItem = self.findItemName(self.lightingSwitchableItemsDic, messageItem)
+		ohItem = self.findItemName(self.lightingSwitchableItemsDic, message_item)
 
 		if ohItem != None:
-			if (command != "on") and (command != "off"):
-				self.speak_dialog('ErrorDialog')
+			statusCode = self.sendCommandToItem(ohItem, command)
+			if statusCode == 200:
+				self.speak_dialog('Status' + command, { 'item': message_item})
+			elif statusCode == 404:
+				LOGGER.error("Some issues with the command execution!. Item not found")
+				self.speak_dialog('ItemNotFoundError')
 			else:
-				statusCode = self.sendCommandToItem(ohItem, command.upper())
-				if statusCode == 200:
-					self.speak_dialog('StatusOnOff', {'command': command, 'item': messageItem})
-				elif statusCode == 404:
-					LOGGER.error("Some issues with the command execution!. Item not found")
-					self.speak_dialog('ItemNotFoundError')
-				else:
-					LOGGER.error("Some issues with the command execution!")
-					self.speak_dialog('CommunicationError')
+				LOGGER.error("Some issues with the command execution!")
+				self.speak_dialog('CommunicationError')
 		else:
 			LOGGER.error("Item not found!")
 			self.speak_dialog('ItemNotFoundError')
+
+	def handle_on_status_intent(self, message):
+		self._handle_onoff_status_intent(message.data.get('Item'), "ON")
+
+	def handle_off_status_intent(self, message):
+		self._handle_onoff_status_intent(message.data.get('Item'), "OFF")
 
 	def handle_dimmer_status_intent(self, message):
 		command = message.data.get('DimmerStatusKeyword')
@@ -257,11 +260,11 @@ class openHABSkill(MycroftSkill):
 		unitOfMeasure = "degree"
 		infoType = "temperature"
 		
-		if (self.lang == "it-IT"):
+		if (self.lang == "it-it"):
 			unitOfMeasure = "gradi"
 			infoType = "temperatura"
 		
-		if (self.lang == "de-DE"):
+		if (self.lang == "de-de"):
 			unitOfMeasure = "Grad"
 			infoType = "Temperatur"
 
@@ -272,10 +275,10 @@ class openHABSkill(MycroftSkill):
 		elif((requestType == "humidity")  or (requestType == "l'umidità") or (requestType == "Feuchtigkeit")):
 			unitOfMeasure = "percentage"
 			infoType = "humidity"
-			if (self.lang == "it-IT"):
+			if (self.lang == "it-it"):
 				unitOfMeasure = "percento"
 				infoType = "umidità"
-			if (self.lang == "de-DE"):
+			if (self.lang == "de-de"):
 				unitOfMeasure = "Prozentsatz"
 				infoType = "Feuchtigkeit"
 			self.currStatusItemsDic.update(self.currentHumItemsDic)
