@@ -179,13 +179,13 @@ class openHABSkill(MycroftSkill):
 		if ohItem != None:
 			statusCode = self.sendCommandToItem(ohItem, command)
 			if statusCode == 200:
-				self.speak_dialog('Status' + command, { 'item': message_item})
+				self.speak_dialog('Status' + command, { 'item': ohItem})
 			elif statusCode == 404:
 				LOGGER.error("Some issues with the command execution!. Item not found")
 				self.speak_dialog('ItemNotFoundError', { 'item': message_item})
 			else:
 				LOGGER.error("Some issues with the command execution!")
-				self.speak_dialog('CommunicationError')
+				self.speak_dialog('CommunicationError') 
 		else:
 			LOGGER.error("Item not found!")
 			self.speak_dialog('ItemNotFoundError', { 'item': message_item})
