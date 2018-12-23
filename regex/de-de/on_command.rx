@@ -1,2 +1,2 @@
-(setze|schalte|bringe) (ein|an) (?P<Item>.*)
-(setze|schalte|bringe) (?P<Item>.*) (ein|an)
+(setze|schalte|bringe|stelle) (ein|an) (?P<Item>.*)
+(setze|schalte|bringe|stelle) (?P<Item>.*) (ein|an)

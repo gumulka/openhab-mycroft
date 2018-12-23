@@ -1,2 +1,2 @@
-(setze|schalte|bringe) (?P<Item>.*) aus
-(setze|schalte|bringe) aus (?P<Item>.*)
+(setze|schalte|bringe|stelle) (?P<Item>.*) aus
+(setze|schalte|bringe|stelle) aus (?P<Item>.*)
