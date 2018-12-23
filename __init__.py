@@ -135,7 +135,7 @@ class openHABSkill(MycroftSkill):
 
 		try:
 			for itemName, itemLabel in list(itemDictionary.items()):
-				score = fuzz.ratio(messageItem, itemLabel)
+				score = fuzz.token_sort_ratio(messageItem, itemLabel)
 				if score > bestScore:
 					bestScore = score
 					bestItem = itemName
@@ -179,7 +179,7 @@ class openHABSkill(MycroftSkill):
 		if ohItem != None:
 			statusCode = self.sendCommandToItem(ohItem, command)
 			if statusCode == 200:
-				self.speak_dialog('Status' + command, { 'item': ohItem})
+				self.speak_dialog('Status' + command, { 'item': message_item})
 			elif statusCode == 404:
 				LOGGER.error("Some issues with the command execution!. Item not found")
 				self.speak_dialog('ItemNotFoundError', { 'item': message_item})
